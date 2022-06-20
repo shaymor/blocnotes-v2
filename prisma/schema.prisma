@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Student {
+  student_id      Int     @id @unique @default(autoincrement())
+  student_name    String
+  student_year    Int
+  student_email   String?
+  student_pfp     String?
+  student_classes Int[]
+  Post            Post[]
+}
+
+model Class {
+  class_id            Int      @id @unique @default(autoincrement())
+  schoology_course_id Int
+  class_name          String
+  class_subject       String
+  class_period        Int
+  class_days          String[]
+  class_teacher       String
+  class_posts         Post[]
+}
+
+model Post {
+  post_id           Int      @id @unique @default(autoincrement())
+  post_publish      DateTime @default(now())
+  post_name         String
+  post_link         String
+  post_author       Student  @relation(fields: [studentStudent_id], references: [student_id])
+  Class             Class?   @relation(fields: [classClass_id], references: [class_id])
+  classClass_id     Int?
+  studentStudent_id Int
+}
